@@ -1,0 +1,157 @@
+﻿@using Life_Paragraph_Core
+@{
+    
+    var dateTime = ViewBag.Time;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="referrer" content="no-referrer" charset="UTF-8">
+    <title>Index</title>
+    <script src="~/js/vue.js"></script>
+    <script src="~/js/vue-router.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row" style="height:20px"></div>
+        <div class="col-md-6">
+            <div id="vueApp3" class="panel panel-default" style="margin-top:20px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-success" style="font-weight:bold">
+                        <a class="text-success">{{gameNodeName}}</a>
+                    </h3>
+                    <small>游戏链接均来自TapTap </small>
+                </div>
+
+                <div class="panel-body">
+                    <div v-for="item in GameList">
+                        <div v-html="item.content" class="panel panel-default col-md-12">
+                            {{item.content}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-lg-offset-5"><span v-on:click="pageSize++,pageClick()" class="btn btn-info btn-lg">更多</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default" style="margin-top:20px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-success" style="font-weight:bold">
+                        <a class="text-success"> 新游预约</a>
+                    </h3>
+                    <small>游戏均来自TapTap </small>
+                </div>
+
+                @*<div id="vueApp3" class="panel-body">
+                    <div v-for="item in GameList">
+                        <div v-html="item.content" class="panel panel-default col-md-12">
+                            {{item.content}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-lg-offset-5"><span v-on:click="pageSize++,pageClick()" class="btn btn-info btn-lg">更多</span></div>
+                    </div>
+                </div>*@
+
+            </div>
+
+        </div>
+
+    </div>
+        <div class="row">
+            <div class="span12">
+                <ul class="thumbnails">
+                    <li class="span4">
+                        <div class="thumbnail">
+                            <div class="caption">
+                                <h3>
+                                    冯诺尔曼结构
+                                </h3>
+                                <p>
+                                    也称普林斯顿结构，是一种将程序指令存储器和数据存储器合并在一起的存储器结构。程序指令存储地址和数据存储地址指向同一个存储器的不同物理位置。
+                                </p>
+                                <p>
+                                    <a class="btn btn-primary" href="#">浏览</a> <a class="btn" href="#">分享</a>
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="span4">
+                        <div class="thumbnail">
+                            <div class="caption">
+                                <h3>
+                                    哈佛结构
+                                </h3>
+                                <p>
+                                    哈佛结构是一种将程序指令存储和数据存储分开的存储器结构，它的主要特点是将程序和数据存储在不同的存储空间中，进行独立编址。
+                                </p>
+                                <p>
+                                    <a class="btn btn-primary" href="#">浏览</a> <a class="btn" href="#">分享</a>
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="span4">
+                        <div class="thumbnail">
+                            <div class="caption">
+                                <h3>
+                                    改进型哈佛结构
+                                </h3>
+                                <p>
+                                    改进型的哈佛结构具有一条独立的地址总线和一条独立的数据总线，两条总线由程序存储器和数据存储器分时复用，使结构更紧凑。
+                                </p>
+                                <p>
+                                    <a class="btn btn-primary" href="#">浏览</a> <a class="btn" href="#">分享</a>
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <script>
+        var v = new Vue({
+            el: "#vueApp3",
+            data: {
+                GameList: '',
+                gameNodeName: '',
+                pageSize:'1',
+            },
+            methods: {
+                recommend: function () {
+                    var _self = this;
+                    var selectEntity = { gameNodeID:@ViewBag.GameNodeID, "pageIndex": '1', "pageSize": _self.pageSize };
+                    $.ajax({
+                        type: "get",
+                        data: selectEntity,
+                        url: "https://localhost:44370/api/GameStrategy/ByGameNodeID",
+                        dataType: "json",
+                        success: function (data) {
+                            _self.gameNodeName = JSON.parse(JSON.stringify(data.viewModel[0].gameNodeName));
+                            _self.GameList = JSON.parse(JSON.stringify(data.viewModel));
+                        }
+                    });
+                },
+                pageClick: function () {
+                    var _self = this;
+                    var selectEntity = { gameNodeID:@ViewBag.GameNodeID, "pageIndex": '1', "pageSize": _self.pageSize };
+                    $.ajax({
+                        type: "get",
+                        data: selectEntity,
+                        url: "https://localhost:44370/api/GameStrategy/ByGameNodeID",
+                        dataType: "json",
+                        success: function (data) {
+                            _self.GameList = JSON.parse(JSON.stringify(data.viewModel));
+                        }
+                    });
+                }
+            }
+        });
+        v.recommend(); //加载事件
+    </script>
+</body>
+</html>

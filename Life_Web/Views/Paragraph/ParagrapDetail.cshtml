@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewData["Title"] = "ParagrapDetail";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <script src="~/js/vue.js"></script>
+    <script src="~/js/vue-router.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <div  class="panel panel-default" style="margin-top:20px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="font-weight:bold">
+                            广告模块
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="panel panel-default" style="margin-top:20px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="font-weight:bold">
+                            新闻详情
+                        </h3>
+                    </div>
+                    <div id="vueDetail" class="panel-body">
+                        <ul>
+                            <li style="list-style-type:none;">
+                                <p class="text-center text-info">
+                                    <h3>{{title}}</h3>
+                                </p>
+                                <blockquote v-html="content">
+                                    {{content}}
+                                </blockquote>
+                                <p class="text-right text-info">阅读({{thumbsupCount}})</p>
+                                <p class="text-right text-info"><small>{{createTime}}</small></p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div id="vueApp2" class="panel panel-default" style="margin-top:20px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="font-weight:bold">
+                            广告模块
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+
+            </div>
+            <div class="col-md-8">
+
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+    <div class="panel-footer">
+
+    </div>
+    <script>
+   var v1 = new Vue({
+       el: "#vueDetail",
+            data: {
+                title: "",
+                content: "",
+                createTime: "",
+                thumbsupCount:""
+            },
+            methods: {
+                recommend: function () {
+                    var _self = this;
+                    $.ajax({
+                        type: "get",
+                        data: { id: @ViewBag.Id},
+                        url: "https://localhost:44370/api/Paragrph/Id",
+                        dataType: "json",
+                        success: function (data) {
+                            _self.title = data.title;
+                            _self.content = data.content;
+                            _self.createTime = data.createTime;
+                            _self.imgUrl = data.imgUrl;
+                            _self.thumbsupCount = data.thumbsupCount;
+                        }
+                    });
+                }
+            }
+        });
+        v1.recommend();
+    </script>
+</body>
+</html>
+

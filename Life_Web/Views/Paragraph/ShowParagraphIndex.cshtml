@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewData["Title"] = "ShowParagraphIndex";
+    var nodeId = ViewBag.NodeId;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <script src="~/js/vue.js"></script>
+    <script src="~/js/vue-router.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <div id="vueApp2" class="panel panel-default" style="margin-top:20px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="font-weight:bold">
+                            广告模块
+             
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div id="vueApp2" class="panel panel-default" style="margin-top:20px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="font-weight:bold">
+                            @ViewBag.NodeName 
+                        </h3>
+                    </div>
+                    <div id="vueParagraph" class="panel-body">
+                        <ul>
+                            <li v-for="x in paragraphLists" style="list-style-type:none;">
+                                <p class="text-center text-info">
+                                    <h3><a :href="'/Paragraph/ParagrapDetail/' + x.id ">{{x.title}}</a></h3>
+                                    <p style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{x.content}}</p>
+                                    <p class="text-right text-info"><small>{{x.createTime}}</small></p>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div id="vueApp2" class="panel panel-default" style="margin-top:20px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="font-weight:bold">
+                            广告模块
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var v1 = new Vue({
+            el: "#vueParagraph",
+            data: {
+                paragraphLists: ''
+            },
+            methods: {
+                recommend: function () {
+                    var _self = this;
+                    $.ajax({
+                        type: "get",
+                        data: { nodeId: @ViewBag.NodeId},
+                        url: "https://localhost:44370/api/Paragrph/NodeId",
+                        dataType: "json",
+                        success: function (data) {
+                            _self.paragraphLists = data;
+                        }
+                    });
+                }
+            }
+        });
+
+        v1.recommend();
+    </script>
+</body>
+</html>
