@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life_Untiy", "Life_Untiy\Li
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "life_Comme", "life_Comme\life_Comme.csproj", "{9356BD6D-157B-4E57-815F-D5E46BF55EA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Life_CoreFilters", "Life_CoreFilters\Life_CoreFilters.csproj", "{1FDA5FC6-40A9-4F2E-95F8-62C115E80688}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{9356BD6D-157B-4E57-815F-D5E46BF55EA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9356BD6D-157B-4E57-815F-D5E46BF55EA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9356BD6D-157B-4E57-815F-D5E46BF55EA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FDA5FC6-40A9-4F2E-95F8-62C115E80688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FDA5FC6-40A9-4F2E-95F8-62C115E80688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FDA5FC6-40A9-4F2E-95F8-62C115E80688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FDA5FC6-40A9-4F2E-95F8-62C115E80688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

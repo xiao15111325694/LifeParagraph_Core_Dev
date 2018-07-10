@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 using System;
 using Models;
 using Life_Core_Repositories;
+using Life_Untiy;
+using Microsoft.Extensions.Options;
+using System.Linq;
+using System.Security.Claims;
 
 namespace Life_Web.Controllers
 {
     public class HomeController : Controller
-    { 
+    {
+        
         private readonly IUserServer _userServer;
         private readonly INodeServer _nodeServer;
         private readonly IParagraphServer _paragraphServer;
@@ -50,7 +55,7 @@ namespace Life_Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            //_gameStrategyServer.PostHtmlGameStrategy();
+            var ss = User.Claims;
             ViewBag.Node = await _nodeServer.GetAllNode();
             ViewBag.Time = DateTime.Now.Date;
             return View();

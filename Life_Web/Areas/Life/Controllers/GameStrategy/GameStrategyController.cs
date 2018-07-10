@@ -4,6 +4,7 @@ using Life_Paragraph_Core;
 using Life_Untiy;
 using Life_Web.Life_Server;
 using Life_Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Life_Web.Areas.Life.Controllers.GameStrategy
@@ -14,6 +15,7 @@ namespace Life_Web.Areas.Life.Controllers.GameStrategy
     /// </summary>
     [Produces("application/json")]
     [Route("api/GameStrategy")]
+    [Authorize]
     public class GameStrategyController : Controller
     {
         private readonly IGameStrategyServer _gameStrategyServer;
@@ -34,6 +36,7 @@ namespace Life_Web.Areas.Life.Controllers.GameStrategy
         /// <param name="gameNodeID"></param>
         /// <param name="selectEntity"></param>
         /// <returns></returns>
+       
         [Route("ByGameNodeID")]
         public async Task<PageViewModel<GameStrategyViewModel>> GetAllByGameNodeID([FromHeader]SelectGameStrategyEntity selectEntity)
         {

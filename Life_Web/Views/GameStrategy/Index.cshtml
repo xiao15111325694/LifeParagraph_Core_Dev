@@ -32,7 +32,7 @@
                                         <a :href="item.fromUrl"><img v-bind:src="item.content" v-bind:data-src="item" data-taptap-image="lazyLoading" class="show img-responsive img-circle center-block" style="display: block; width:150px ; height:150px" /></a>
                                     </div>
                                     <div>
-                                        <a class="text-info text-center" :href="item.fromUrl"><p><h6>{{item.gameName}}{{item.gameNodeName}}</h6></p></a>
+                                        <a class="text-info text-center" :href="item.fromUrl"><p><h6>{{item.gameName}}</h6></p></a>
                                     </div>
                                 </div>
                             </div>
@@ -121,6 +121,9 @@
                         type: "get",
                         data: selectEntity,
                         url: "https://localhost:44370/api/GameStrategy/ByGameNodeID",
+                        headers: {
+                            "Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMTExMEBxcS5jb20iLCJlbWFpbCI6IjExMTBAcXEuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNTMwODQ3NTgxLCJpc3MiOiJMaWZlX1Rlc3RJc3N1ZXIiLCJhdWQiOiJMaWZlLVRlc3RBdWRpZW5jZSJ9.6NRFa42rkqxN6WS9srQ90b_bl9_APcD7ICJJCwLwXBo"
+                        },
                         dataType: "json",
                         success: function (data) {
                             _self.gameNodeName = JSON.parse(JSON.stringify(data.viewModel[1].gameNodeName));

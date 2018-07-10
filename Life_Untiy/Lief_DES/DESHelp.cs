@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.Options;
+using Microsoft.Extensions.Options;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,9 +9,9 @@ namespace Life_Untiy
     public class DESHelp
     {
         public EcryptKeyConfig Config;
-        public DESHelp(Option<EcryptKeyConfig> option)
+        public DESHelp(IOptions<EcryptKeyConfig> option)
         {
-            Config = option.DefaultValue;
+            Config = option.Value;
         }
 
         public DESHelp()
@@ -26,7 +27,7 @@ namespace Life_Untiy
         {
             if (!string.IsNullOrEmpty(text))
             {
-                return DesEncrypt(text, Config.KeyCode);
+                return DesEncrypt(text, "lief_Paragraph_2018_dev_codeKey");
             }
             else
             {
@@ -65,7 +66,7 @@ namespace Life_Untiy
         {
             if (!string.IsNullOrEmpty(Text))
             {
-                return DesDecrypt(Text, Config.KeyCode);
+                return DesDecrypt(Text, "lief_Paragraph_2018_dev_codeKey");
             }
             else
             {

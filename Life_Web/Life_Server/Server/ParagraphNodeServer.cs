@@ -18,6 +18,10 @@ namespace Life_Web.Life_Server
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IQueryable<ParagraphNode> FinAll()
         {
             return GetAll().AsQueryable();

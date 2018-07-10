@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Life_Web.Data;
-using Life_Web.Models;
 using Life_Web.Services;
 using Life_Web.Life_Server;
 using Models;
@@ -13,11 +11,24 @@ using Life_Core_Repositories;
 using AutoMapper;
 using Hangfire;
 using Life_Untiy;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Life_Web.Auth;
 
 namespace Life_Web
 {
     public class Startup
     {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="option"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,15 +39,49 @@ namespace Life_Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            var ss = Configuration["JwtSecurityConfig:JwtSecurityKey"];
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            //配置授权
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer("Bearer",
+            (jwtBearerOptions) =>
+            {
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Configuration["JwtSecurityConfig:JwtSecurityKey"])),//秘钥
+                    ValidateIssuer = true,
+                    ValidIssuer = Configuration["JwtSecurityConfig:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JwtSecurityConfig:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(5)
+                };
+
+                //jwtBearerOptions.Events = new JwtBearerEvents
+                //{
+                //    //重写OnMessageReceived
+                //    OnMessageReceived = context => {
+                //        var token = context.Request.Headers["token"];
+                //        context.Token = token.FirstOrDefault();
+                //        return Task.CompletedTask;
+                //    }
+                //};
+            });
 
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            services.AddMvc();
+
+            //添加options
+            services.AddOptions();
+            services.Configure<JwtSecurityConfig>(Configuration.GetSection("JwtSecurityConfig"));
+
             // Add application services.
             services.AddScoped<IRepository<User>, Repository<User>>();
             services.AddScoped<IRepository<Node>, Repository<Node>>();
@@ -75,15 +120,30 @@ namespace Life_Web
             //    var xmlPath = Path.Combine(basePath, "Life_Web.xml");
             //    options.IncludeXmlComments(xmlPath);
             //});
+            //添加认证Cookie信息
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                 {
+                     options.LoginPath = new PathString("/login");
+                     options.AccessDeniedPath = new PathString("/denied");
+                 });
+
+            //Token
+            services.AddAuthorization(auth =>
+            {
+                    auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
+                    .RequireAuthenticatedUser().Build());
+            });
+
+
+
 
             services.AddHangfire(r => r.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMemoryCache();
-            services.AddMvc();
 
             services.AddAutoMapper();
-              //添加options
-            services.AddOptions();
-            services.Configure<EcryptKeyConfig>(Configuration.GetSection("EcryptKeyConfig"));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,19 +160,43 @@ namespace Life_Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
-            app.UseAuthentication();
+            app.UseStaticFiles();  
+            app.UseAuthentication(); //注册认证中间件
 
-            
+            ////异常处理
+            //app.UseStatusCodePages(new StatusCodePagesOptions()
+            //{
+            //    HandleAsync = (context) =>
+            //    {
+            //        if (context.HttpContext.Response.StatusCode == 401)
+            //        {
+            //            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(context.HttpContext.Response.Body))
+            //            {
+            //                sw.Write(Newtonsoft.Json.JsonConvert.SerializeObject(new
+            //                {
+            //                    status = 401,
+            //                    message = "access denied!",
+            //                }));
+            //            }
+            //        }
+            //        return System.Threading.Tasks.Task.Delay(0);
+            //    }
+            //});
+
+
 
             app.UseHangfireServer(); //启动HangFire服务
             app.UseHangfireDashboard();//启动HangFire可视化面板
-                                      //RecurringJob.AddOrUpdate(() => Console.WriteLine("HangFire State Job"), Cron.Minutely());//定时（循环）任务代表可以重复性执行多次，支持CRON表达式：
-                                      //BackgroundJob.Schedule(() => Console.WriteLine("HangFire State Job"), TimeSpan.FromSeconds(1))延迟（计划）任务跟队列任务相似，客户端调用时需要指定在一定时间间隔后调用：
-                                      //BackgroundJob.Enqueue(() => Console.WriteLine("HangFire State Job"));//基于队列
+                                       //RecurringJob.AddOrUpdate(() => Console.WriteLine("HangFire State Job"), Cron.Minutely());//定时（循环）任务代表可以重复性执行多次，支持CRON表达式：
+                                       //BackgroundJob.Schedule(() => Console.WriteLine("HangFire State Job"), TimeSpan.FromSeconds(1))延迟（计划）任务跟队列任务相似，客户端调用时需要指定在一定时间间隔后调用：
+                                       //BackgroundJob.Enqueue(() => Console.WriteLine("HangFire State Job"));//基于队列
 
-            // BackgroundJob.Enqueue<IParagraphServer>(x => x.HtmlPackPostParagraph());
-            // BackgroundJob.Enqueue<IParagraphServer>(x => x.HtmlPackByUrlToContnt());
+            //BackgroundJob.Enqueue<IParagraphServer>(x => x.HtmlPackPostParagraph());
+
+            //BackgroundJob.Enqueue<IParagraphServer>(x => x.HtmlPackByUrlToContnt());
+
+
+            app.UseMiddleware<TokenProviderMiddleware>();
 
             app.UseMvc(routes =>
             {

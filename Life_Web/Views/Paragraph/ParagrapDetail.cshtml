@@ -12,6 +12,9 @@
     <script src="~/js/vue.js"></script>
     <script src="~/js/vue-router.js"></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
+
+    <link href="~/css/wangEditor.css" rel="stylesheet" />
+    <script src="~/js/wangEditor.js"></script>
 </head>
 <body>
     <div class="container-fluid">
@@ -63,9 +66,19 @@
             <div class="col-md-2">
 
             </div>
-            <div class="col-md-8">
-
+            <div class="col-md-8" >
+                <div class="row" id="EditorText">
+                    <div class="col-md-12"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-11"></div>
+                    <div class="col-md-1">
+                        <a v-on:click="savaUserMessage()" class="btn btn-default">提交</a>
+                    </div>
+                   
+                </div>
             </div>
+          
             <div class="col-md-2"></div>
         </div>
     </div>
@@ -73,6 +86,20 @@
 
     </div>
     <script>
+
+        var E = window.wangEditor
+        var editor2 = new E('#EditorText')
+        editor2.create()
+
+
+        ////内容修改事件，此处做的是实时展示实际效果
+        // E.onchange = function () {
+        //    alert('1');
+        //    //获取editor的html值
+        //    var html = editor2.$txt.html();
+        //    $("#show_box").html(html)
+        //}
+       
    var v1 = new Vue({
        el: "#vueDetail",
             data: {

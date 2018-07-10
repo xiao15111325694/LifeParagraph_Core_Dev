@@ -35,10 +35,12 @@
     <Folder Include="Areas\Life\Data\" />
     <Folder Include="Areas\Life\Models\" />
     <Folder Include="Areas\Life\Views\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\life_Comme\life_Comme.csproj" />
+    <ProjectReference Include="..\Life_CoreFilters\Life_CoreFilters.csproj" />
     <ProjectReference Include="..\Life_Untiy\Life_Untiy.csproj" />
   </ItemGroup>
 
